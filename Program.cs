@@ -1,4 +1,7 @@
 
+using DotNet8Authentication.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 namespace DotNet8Authentication
 {
     public class Program
@@ -13,6 +16,13 @@ namespace DotNet8Authentication
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<DataContext>(options => 
+                options.UseSqlServer(builder.Configuration.GetConnectionString("LjfDatabase")));
+
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<DataContext>();
 
             var app = builder.Build();
 
@@ -22,6 +32,8 @@ namespace DotNet8Authentication
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.MapIdentityApi<IdentityUser>();
 
             app.UseHttpsRedirection();
 
